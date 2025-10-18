@@ -20,8 +20,17 @@ Transaction::Transaction(double inputAmount, int inputBuyerId, int inputSellerId
         return transactionTime;
     }
 
-    OrderStatus Transaction::getOrderStatus(){
-        return orderStatus;
+    string Transaction::getOrderStatus(){
+        switch (orderStatus) {
+        case PAID:
+            return "Paid"; // Jika statusnya PAID, kembalikan string "Paid"
+        case COMPLETED:
+            return "Completed";
+        case CANCELLED:
+            return "Cancelled";
+        default:
+            return "Unknown"; // Untuk keamanan jika ada status lain
+    }
     }
 
     void Transaction::setStatus(OrderStatus inputStatus){

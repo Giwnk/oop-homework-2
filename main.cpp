@@ -26,6 +26,20 @@ enum RegisterPrompt {
 enum LoginPrompt{
     LOGIN_AS_BUYER,
     LOGIN_AS_SELLER,
+    BANK_CAPABILITIES,
+    STORE_CAPABILITIES,
+    LOGOUT
+};
+
+enum BuyerLoginMenuPrompt{
+    CHECK_STATUS_ACCOUNT,
+    UPGRADE_TO_SELLER,
+    SHOW_BUYER_INFO,
+    SHOW_LIST_STORES,
+    SHOW_INVENTORY,
+    PURCHASE_ITEM,
+    SHOW_ALL_ORDERS,
+    SHOW_LATEST_SPENDING,
     LOGOUT
 };
 
@@ -53,6 +67,7 @@ bool handleRegisterAsBuyer() {
 
     cout << "Input Your Name           : ";
     getline(cin >> ws,name);
+
     cout << "Input Your Email          : ";
     getline(cin, email);
     cout << "Input Your Address        : ";
@@ -62,7 +77,7 @@ bool handleRegisterAsBuyer() {
 
     Database::loggedBuyer = new Buyer(phoneNum, name, email, address, Database::loggedBankCustomer);
     Database::addBuyer(Database::loggedBuyer);
-    
+    Database::isBuyer = true;
     cout << "\nBuyer Registered Successfully!\n";
     return true;
 }
@@ -72,7 +87,7 @@ bool handleRegisterBankCustomer() {
     double balance;
 
     cout << "=========================================================\n";
-    cout << "                     REGISTER AS BANK CUSTOMER\n";
+    cout << "                     REGISTER BANK CUSTOMER\n";
     cout << "=========================================================\n";
 
     cout << "Input Your Name    : ";
@@ -88,6 +103,7 @@ bool handleRegisterBankCustomer() {
 
     Database::loggedBankCustomer = new BankCustomer(name, balance);
     Database::mainBank.addBankCustomer(*Database::loggedBankCustomer);
+    Database::isBankLinked = true;
 
     cout << "\nBank Customer Registered Successfully!\n";
     return true;
@@ -117,12 +133,223 @@ bool handleRegisterAsSeller(){
     cout << "Input Your Store Name   : ";
     getline(cin, storeName);
 
-    Database::newStore = new Store(storeName);
-    Database::loggedSeller = new Seller(phoneNum, name, storeName, email, address, Database::loggedBankCustomer, Database::newStore);
+    Store* newStore = new Store(storeName);
+    Seller* newSeller = new Seller(phoneNum, name, storeName, email, address, Database::loggedBankCustomer, newStore);
+    newStore->setAssociatedSeller(newSeller);
+    Database::loggedSeller = newSeller;
     Database::addSeller(Database::loggedSeller);
+    Database::isSeller = true;
     cout << "\nSeller Registered Successfully!\n";
     return true;
 }
+
+
+void checkAccountStatus(){
+    cout << "\n[INFO] Check Account Status selected." << endl;
+
+    cout << "\n[User Role Status]" << endl;
+    if (Database::isBuyer && Database::isSeller) {
+        cout << "Your Role is Buyer and Seller." << endl;
+    } else if (Database::isBuyer) {
+        cout << "Your Role is Buyer." << endl;
+    } else if (Database::isSeller) {
+        cout << "Your Role is Seller." << endl;
+    } else {
+        cout << "You do not have Buyer or Seller account." << endl;
+    }
+    if (Database::isBuyer && Database::loggedBuyer && Database::loggedBankCustomer) {
+        cout << "\n[Buyer Account Details]" << endl;
+        cout << "Name : " << Database::loggedBuyer->getBuyerName() << endl;
+        cout << "ID   : " << Database::loggedBuyer->getBuyerID() << endl;
+        cout << "Linked Bank Account ID: " << Database::loggedBankCustomer->getId() << endl;
+    }
+    if (Database::isSeller && Database::loggedSeller){
+        cout << "\n[Seller Account Details]" << endl;
+        cout << "Store Name : " << Database::loggedSeller->getStoreName() << endl;
+        cout << "Seller ID  : " << Database::loggedSeller->getSellerId() << endl;
+    
+    if (Database::isBankLinked && Database::loggedBankCustomer) {
+        cout << "\n[Banking Account Status]" << endl;
+        cout << "You have a linked banking account." << endl;
+        Database::loggedBankCustomer->showInfo();
+    } else {
+        cout << "\nYou do not have a linked banking account." << endl;
+    }
+}
+}
+
+void upgradeToSeller(){
+    string name, email, address, phoneNum, storeName;
+    cout << "\n[INFO] Upgrade Account to Seller selected." << endl;
+    if (!Database::isBankLinked) {
+        cout << "Upgrade denied: You do not have a linked Bank Account!\n";
+    } else if (Database::isSeller) {
+        cout << " You are already a Seller!\n";
+    } else {
+        cout << "Input Your Name : ";
+        getline(cin >> ws,name);
+        cout << "Input Your Email : ";
+        getline(cin, email);
+        cout << "Input Your Address : ";
+        getline(cin, address);
+        cout << "Input Your Phone Number : ";
+        getline(cin, phoneNum);
+        cout << "Input Your Store Name : ";
+        getline(cin, storeName);
+
+        Database::newStore = new Store(storeName);
+        Database::loggedSeller = new Seller(phoneNum, name, storeName, email, address, Database::loggedBankCustomer, Database::newStore);
+        Database::addSeller(Database::loggedSeller);
+        Database::isSeller = true;
+        cout << "\nSeller Registered Successfully!\n";
+    }
+}
+
+void showBuyerInfo(){
+    Database::loggedBuyer->showInfoBuyer();
+}
+
+void showListStores(){
+    for (auto &&store : Database::listStores)
+    {
+        cout << "======" << store->getStoreName() << "======" << endl; 
+        store->showDetailStore();
+        cout << "\n" << endl;
+    }
+}
+
+void showInventory(){
+    int inputStoreId;
+    cout << "Input ID Store That You Want To See Their Inventory: ";
+    cin >> inputStoreId;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    for (auto &&store : Database::listStores)
+    {
+        if (store->getStoreId() == inputStoreId)
+        {
+            cout << "======" << store->getStoreName() << "======" << endl; 
+            store->showInventory();
+            cout << "\n" << endl;
+        } 
+    }
+}
+
+void purchaseItem(){
+    int inputItemId, inputQuantity;
+    cout << "Input ID Item That You Want To Purchase: ";
+    cin >> inputItemId;
+    cout << "Input ID Item That You Want To Purchase: ";
+    cin >> inputItemId;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    Store* targetStore;
+    Item* foundItem = Database::findItemById(inputItemId, targetStore);
+    if (foundItem == nullptr)
+    {
+        cout << "\nItem With ID " << inputItemId << " Not Found In Any Store.\n" << endl;
+        return;
+    }
+
+    Seller* targetSeller = targetStore->getAssociatedSeller();
+    Database::loggedBuyer->purchaseItem(inputItemId,inputQuantity,targetStore,targetSeller,&Database::transactionHistory);
+}
+
+void showAllOrders(){
+    string inputStatusFilter;
+    cout << "\n=== LIST ALL ORDERS ===\n" << endl;
+    cout << "Filter By Status (Paid, Completed, Cancelled) or Empty For All: ";
+    getline(cin, inputStatusFilter);
+    int ordersFound = 0;
+    for (auto &&transaction : Database::transactionHistory) {
+        // Logika: Tampilkan jika filter kosong ATAU jika statusnya cocok
+        if (inputStatusFilter.empty() || transaction.getOrderStatus() == inputStatusFilter) {
+            transaction.printReceipt();
+            cout << "----------------------------------------\n";
+            ordersFound++;
+        }
+    }
+
+    if (ordersFound == 0) {
+        cout << "\nTidak ada pesanan yang ditemukan.\n";
+    }
+
+    
+}
+
+/// =============================================================
+/// Login Menu Handlers
+/// =============================================================
+
+void handleBuyerLoginMenu(){
+    bool inBuyerLoginMenu = true;
+
+    while (inBuyerLoginMenu) {
+        cout << "\n=========================================================\n";
+        cout << "                       BUYER MENU\n";
+        cout << "=========================================================\n";
+        cout << "1. Login As Buyer\n";
+        cout << "2. Login As Seller\n";
+        cout << "3. Logout\n";
+        cout << "=========================================================\n";
+        cout << "Select option (1-4): ";
+
+        int choice;
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid input! Please enter a number (1-4).\n";
+            continue;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        BuyerLoginMenuPrompt buyerLoginMenuPrompt = static_cast<BuyerLoginMenuPrompt>(choice - 1);
+
+        switch (buyerLoginMenuPrompt)
+        {
+        case CHECK_STATUS_ACCOUNT:
+            checkAccountStatus();
+            break;
+        
+        case UPGRADE_TO_SELLER:
+            upgradeToSeller();
+            break;
+        
+        case SHOW_BUYER_INFO:
+            showBuyerInfo();
+            break;
+        
+        case SHOW_LIST_STORES:
+            showListStores();
+            break;
+
+        case SHOW_INVENTORY:
+            showInventory();
+            break;
+        
+        case PURCHASE_ITEM:
+            purchaseItem();
+            break;
+        
+        case SHOW_ALL_ORDERS:
+            showAllOrders();
+            break;
+        
+        case SHOW_LATEST_SPENDING:
+            handleSellerLogin();
+            break;
+        
+        case LOGOUT:
+            inBuyerLoginMenu = false; 
+            break;
+        
+        default:
+            break;
+        }
+    }
+
+};
+
 
 
 /// =============================================================
@@ -235,11 +462,13 @@ void handleLoginMenu(){
 
     while (inLoginMenu) {
         cout << "\n=========================================================\n";
-        cout << "                       REGISTER MENU\n";
+        cout << "                       LOGIN MENU\n";
         cout << "=========================================================\n";
         cout << "1. Login As Buyer\n";
         cout << "2. Login As Seller\n";
-        cout << "3. Logout\n";
+        cout << "3. Bank Capabilities\n";
+        cout << "4. Store Capabilities\n";
+        cout << "5. Back To Main Menu\n";
         cout << "=========================================================\n";
         cout << "Select option (1-4): ";
 

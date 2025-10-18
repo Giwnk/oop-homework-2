@@ -17,6 +17,11 @@ Seller::Seller(string inputPhoneNum, string inputName, string inputStoreName, st
         return associatedStore;
     }
 
+
+    int Seller::getSellerId(){
+        return sellerId;
+    }
+
     void Seller::showInfoSeller() {
         cout << "\n========================" << endl;
         cout << ">>> == SELLER INFO == <<< " << endl;

@@ -24,6 +24,7 @@ public:
 
     string getStoreName();
     Store* getAssociatedStore();
+    int getSellerId();
     void showInfoSeller();
 
 };

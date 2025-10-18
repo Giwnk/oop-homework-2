@@ -27,7 +27,7 @@ public:
     Transaction(double inputAmount, int inputBuyerId, int inputSellerId, int inputItemId, int inputQuantity, string inputItemName, string inputStoreName, time_t inputTransactionTime);
 
     time_t getTransactionTime();
-    OrderStatus getOrderStatus();
+    string getOrderStatus();
 
     void setStatus(OrderStatus inputStatus);
 

@@ -21,16 +21,28 @@ Store::Store(string inputStoreName){
     Item* Store::searchItemById(int inputItemId){
         for (auto &&item : inventoryItems)
         {
-            if (item.getItemId() == inputItemId)
+            if (item->getItemId() == inputItemId)
             {
-                return &item;
+                return item;
             }
         }
         return nullptr;
     }
 
+    vector<Item*> Store::getInventoryItems(){
+        return inventoryItems;
+    }
+
+    Seller* Store::setAssociatedSeller(Seller* inputAssociatedSeller){
+        associatedSeller = inputAssociatedSeller;
+    }
+
+    Seller* Store::getAssociatedSeller(){
+        return associatedSeller;
+    }
+
     void Store::addItem(Item &inputItem){
-        inventoryItems.push_back(inputItem);
+        inventoryItems.emplace_back(inputItem);
     }
 
     void Store::showDetailStore(){
@@ -42,10 +54,10 @@ Store::Store(string inputStoreName){
     void Store::showInventory(){
         for (auto &&item : inventoryItems)
         {
-            cout << "ID Item: " << item.getItemId() << endl;
-            cout << "Nama Item: " << item.getItemName() << endl;
-            cout << "Harga Item: " << item.getItemPrice() << endl;
-            cout << "Jumlah Item: " << item.getItemQuantity() << endl;
+            cout << "ID Item: " << item->getItemId() << endl;
+            cout << "Nama Item: " << item->getItemName() << endl;
+            cout << "Harga Item: " << item->getItemPrice() << endl;
+            cout << "Jumlah Item: " << item->getItemQuantity() << endl;
             cout << "--------------------------" << endl;
         }
     }

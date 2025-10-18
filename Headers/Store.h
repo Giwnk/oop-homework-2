@@ -12,7 +12,8 @@ class Store{
     int inline static storeIdCounter; 
     int storeId;
     string storeName;
-    vector<Item> inventoryItems;
+    vector<Item*> inventoryItems;
+    Seller* associatedSeller;
 
     public:
     Store(string inputStoreName);
@@ -21,6 +22,9 @@ class Store{
     int getStoreId();
     int getAmountItem();
     Item* searchItemById(int inputItemId);
+    vector<Item*> getInventoryItems();
+    Seller* setAssociatedSeller(Seller* inputAssociatedSeller);
+    Seller* getAssociatedSeller();
 
     void addItem(Item &inputItem);
 
