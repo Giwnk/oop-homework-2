@@ -15,6 +15,8 @@ enum OrderStatus{
 
 class Transaction {
 private:
+    int transactionId;
+    int static transactionIdCounter;
     double transactionAmount;
     int buyerId, sellerId, itemId, quantity;
     string itemName, storeName;
@@ -29,12 +31,14 @@ public:
     time_t getTransactionTime();
     string getOrderStatus();
 
-    void setStatus(OrderStatus inputStatus);
+    void setStatus(string inputStatus);
 
     int getItemId();
     int getBuyerId();
     int getSellerId();
     string getItemName();
+    int getTransactionId();
+
 
     void displayTimestamp();
 

@@ -45,6 +45,18 @@ class Database{
         return nullptr;
     }
 
+    static Buyer* findBuyerById(int inputId){
+        for (auto &&buyer : listBuyers)
+        {
+            if (buyer->getBuyerID() == inputId)
+            {
+                return buyer;
+            }
+            
+        }
+        return nullptr;
+    }
+
     static Seller* findSellerByName(string inputName){
         for (auto &&seller : listSellers)
         {
@@ -64,12 +76,22 @@ class Database{
         for (Item* item : store->getInventoryItems()) { // Asumsi ada fungsi getListItem() di Store
             if (item->getItemId() == itemId) { // Asumsi ada fungsi getItemId() di Item
                 foundInStore = store;
-                return item; // Jika ID cocok, kembalikan pointer itemnya
+                return item;
             }
         }
     }
-    return nullptr; // Jika tidak ditemukan di semua toko, kembalikan nullptr
+    return nullptr;
 }
+
+    static Transaction* findTransactionById(int transactionId) {
+        for (auto &&transaction : transactionHistory) {
+            if (transaction.getTransactionId() == transactionId) {
+                return &transaction;
+            }
+        }
+        return nullptr;
+    }
+
 
     static void addBuyer(Buyer* buyer) {
         listBuyers.push_back(buyer); // Menambahkan pointer buyer ke akhir vector 'buyers'

@@ -5,14 +5,20 @@
 #include "../Headers/Transaction.h"
 using namespace std;
 
+int Transaction::transactionIdCounter = 1000;
+
+
 Transaction::Transaction(double inputAmount, int inputBuyerId, int inputSellerId, int inputItemId, int inputQuantity, string inputItemName, string inputStoreName)
         : transactionAmount(inputAmount), buyerId(inputBuyerId), sellerId(inputSellerId), itemId(inputItemId), quantity(inputQuantity), itemName(inputItemName), storeName(inputStoreName) {
-        transactionTime = time(0); // Catat waktu transaksi
+        transactionId = ++transactionIdCounter;
+        transactionTime = time(0);
+
         orderStatus = PAID;
     }
 Transaction::Transaction(double inputAmount, int inputBuyerId, int inputSellerId, int inputItemId, int inputQuantity, string inputItemName, string inputStoreName, time_t inputTransactionTime)
         : transactionAmount(inputAmount), buyerId(inputBuyerId), sellerId(inputSellerId), itemId(inputItemId), quantity(inputQuantity), itemName(inputItemName), storeName(inputStoreName) {
         transactionTime = inputTransactionTime; // Catat waktu transaksi
+        transactionId = ++transactionIdCounter;
         orderStatus = PAID;
     }
 
@@ -33,14 +39,22 @@ Transaction::Transaction(double inputAmount, int inputBuyerId, int inputSellerId
     }
     }
 
-    void Transaction::setStatus(OrderStatus inputStatus){
-        orderStatus = inputStatus;
+    void Transaction::setStatus(string inputStatus){
+        if (inputStatus == "Paid") {
+            orderStatus = PAID;
+        } else if (inputStatus == "Completed") {
+            orderStatus = COMPLETED;
+        } else if (inputStatus == "Cancelled") {
+            orderStatus = CANCELLED;
+        }
     }
 
     int Transaction::getBuyerId(){return buyerId;}
     int Transaction::getSellerId(){return sellerId;}
     int Transaction::getItemId(){return itemId;}
     string Transaction::getItemName(){return itemName;}
+    int Transaction::getTransactionId(){return transactionId;}
+
 
 
     void Transaction::displayTimestamp(){

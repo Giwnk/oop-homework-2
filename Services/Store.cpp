@@ -55,9 +55,9 @@ Store::Store(string inputStoreName){
         for (auto &&item : inventoryItems)
         {
             cout << "ID Item: " << item->getItemId() << endl;
-            cout << "Nama Item: " << item->getItemName() << endl;
-            cout << "Harga Item: " << item->getItemPrice() << endl;
-            cout << "Jumlah Item: " << item->getItemQuantity() << endl;
+            cout << "Item Name: " << item->getItemName() << endl;
+            cout << "Item Price: " << item->getItemPrice() << endl;
+            cout << "Item Quantity: " << item->getItemQuantity() << endl;
             cout << "--------------------------" << endl;
         }
     }

@@ -36,12 +36,37 @@ enum BuyerLoginMenuPrompt{
     UPGRADE_TO_SELLER,
     SHOW_BUYER_INFO,
     SHOW_LIST_STORES,
-    SHOW_INVENTORY,
+    SHOW_INVENTORY_FOR_BUYER,
     PURCHASE_ITEM,
     SHOW_ALL_ORDERS,
     SHOW_LATEST_SPENDING,
-    LOGOUT
+    LOGOUT_BUYER
 };
+
+enum SellerLoginMenuPrompt{
+    SHOW_SELLER_INFO,
+    ADD_ITEM,
+    UPDATE_ITEM,
+    SHOW_INVENTORY_FOR_SELLER,
+    SHOW_ORDERS,
+    UPDATE_ORDER_STATUS,
+    SHOW_TOP_ITEMS,
+    SHOW_LOYAL_CUSTOMERS,
+    CHECK_BALANCE,
+    LOGOUT_SELLER
+};
+
+enum BankCapabilitiesPrompt{
+    LIST_ALL_BANK_CUSTOMERS,
+    SEARCH_CUSTOMERS_BY_ID,
+    SHOW_LATEST_WEEK_TRANSACTION,
+    FILTER_TRANSACTION_BY_TYPE,
+    SHOW_DORMANT_CUSTOMERS,
+    SHOW_TOP_ACTIVE_USERS,
+    LOGOUT_BANK
+
+};
+
 
 /// =============================================================
 /// Utility Functions
@@ -143,6 +168,11 @@ bool handleRegisterAsSeller(){
     return true;
 }
 
+
+/// =============================================================
+/// Buyer Login Menu
+/// =============================================================
+
 void checkAccountStatus(){
     cout << "\n[INFO] Check Account Status selected." << endl;
 
@@ -209,6 +239,12 @@ void showBuyerInfo(){
 }
 
 void showListStores(){
+    cout << "\n=== LIST STORES ===\n" << endl;
+    if (Database::listStores.empty())
+    {
+        cout << "Store is empty.\n" << endl;
+        return;
+    }
     for (auto &&store : Database::listStores)
     {
         cout << "======" << store->getStoreName() << "======" << endl; 
@@ -218,6 +254,13 @@ void showListStores(){
 }
 
 void showInventory(){
+    cout << "\n=== SHOW INVENTORY ===\n" << endl;
+    if (Database::listStores.empty())
+    {
+        cout << "Store is empty.\n" << endl;
+        return;
+    }
+    
     int inputStoreId;
     cout << "Input ID Store That You Want To See Their Inventory: ";
     cin >> inputStoreId;
@@ -276,16 +319,291 @@ void showAllOrders(){
     
 }
 
-// void showLatestSpending() {
-//     int inputDays;
-//     cout << "\n=== SHOW LATEST SPENDING ===\n" << endl;
-//     cout << "Input Days : ";
-//     cin >> inputDays;
-//     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+void showLatestSpending() {
+    if (Database::bankTransactionHistory.empty()){
+        cout << "Bank Transaction History is empty.\n" << endl;
+        return;
+    }
 
-//     listWithdrawalsLatestKDays(inputDays);
+    int inputDays;
+    cout << "\n=== SHOW LATEST SPENDING ===\n" << endl;
+    cout << "Input How Many Days You Want To See: ";
+    cin >> inputDays;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-// }
+    listWithdrawalsLatestKDays(inputDays);
+
+}
+
+/// =============================================================
+/// Seller Login Menu
+/// =============================================================
+
+void showSellerInfo(){
+    Database::loggedSeller->showInfoSeller();
+}
+
+void addItem(){
+    string itemName;
+    int itemPrice, itemQuantity;
+    cout << "\n=== ADD ITEM ===\n" << endl;
+    cout << "Input Item Name: ";
+    getline(cin, itemName);
+    cout << "Input Item Price: ";
+    cin >> itemPrice;
+    cout << "Input Item Quantity: ";
+    cin >> itemQuantity;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    Item* newItem = new Item(itemName, itemPrice, itemQuantity);
+    Database::newStore->addItem(*newItem);
+    cout << "\nItem Added Successfully!\n";
+}
+
+void updateItem(){
+    int inputItemId;
+    cout << "\n=== UPDATE ITEM ===\n" << endl;
+    cout << "Input ID Item That You Want To Update: ";
+    cin >> inputItemId;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    Item* foundItem = Database::findItemById(inputItemId, Database::newStore);
+    if (foundItem == nullptr)
+    {
+        cout << "\nItem With ID " << inputItemId << " Not Found In Store.\n" << endl;
+        return;
+    }
+
+    string itemName;
+    int itemPrice, itemQuantity;
+    cout << "Input New Item Name: ";
+    getline(cin, itemName);
+    cout << "Input New Item Price: ";
+    cin >> itemPrice;
+    cout << "Input New Item Quantity: ";
+    cin >> itemQuantity;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    foundItem->setItemName(itemName);
+    foundItem->setItemPrice(itemPrice);
+    foundItem->addItemQuantity(itemQuantity);
+    cout << "\nItem Updated Successfully!\n";
+    cout << "\n Detail Item Updated: \n" << endl;
+    foundItem->showDetailItem();
+
+}
+
+void showMyInventory(){
+    cout << "\n=== SHOW MY INVENTORY ===\n" << endl;
+    if (Database::newStore == nullptr)
+    {
+        cout << "Store is empty.\n" << endl;
+        return;
+    }
+    Database::newStore->showInventory();
+}
+
+void updateOrderStatus(){
+    cout << "\n=== UPDATE ORDER STATUS ===\n" << endl;
+    if (Database::transactionHistory.empty())
+    {
+        cout << "Transaction History is empty.\n" << endl;
+        return;
+    }
+
+    int inputTransactionId;
+    cout << "\n=== UPDATE ORDER STATUS ===\n" << endl;
+    cout << "Input ID Transaction That You Want To Update: ";
+    cin >> inputTransactionId;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    Transaction* foundTransaction = Database::findTransactionById(inputTransactionId);
+    if (foundTransaction == nullptr)
+    {
+        cout << "\nTransaction With ID " << inputTransactionId << " Not Found.\n" << endl;
+        return;
+    }
+
+    string newOrderStatus;
+    cout << "Input New Order Status: ";
+    getline(cin, newOrderStatus);
+
+    foundTransaction->setStatus(newOrderStatus);
+    cout << "\nOrder Status Updated Successfully!\n";
+    cout << "\n Detail Order Updated: \n" << endl;
+    foundTransaction->printReceipt();
+    cout << "\n" << endl;
+
+}
+
+void showTopItems(){
+    if (Database::transactionHistory.empty())
+    {
+        cout << "Transaction History is empty.\n" << endl;
+        return;
+    }
+
+    int inputMItems;
+    cout << "\n=== SHOW TOP ITEMS ===\n" << endl;
+    cout << "Input M Items: ";
+    cin >> inputMItems;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    mostFrequentMItems(inputMItems);
+}
+
+void checkSellerBalance(){
+    cout << "\n=== CHECK SELLER BALANCE ===\n" << endl;
+    Database::loggedSeller->getBuyerAccount()->showInfo();
+}    
+
+/// =============================================================
+/// Bank Capabilities
+/// =============================================================
+
+void listAllBankCustommers(){
+    if (Database::mainBank.getListBankCustomers().empty())
+    {
+        cout << "Bank Customer is empty.\n" << endl;
+        return;
+    }
+    
+    cout << "\n=== LIST ALL BANK CUSTOMERS ===\n" << endl;
+    for (auto &&bankCustomer : Database::mainBank.getListBankCustomers())
+    {
+        bankCustomer.showInfo();
+    }
+}
+
+void searchCustomersById(){
+    int inputId;
+    cout << "\n=== SEARCH CUSTOMERS BY ID ===\n" << endl;
+    cout << "Input ID Bank Customer That You Want To Search: ";
+    cin >> inputId;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    BankCustomer* foundBankCustomer = Database::mainBank.searchCustomerById(inputId);
+    if (foundBankCustomer == nullptr)
+    {
+        cout << "\nBank Customer With ID " << inputId << " Not Found.\n" << endl;
+        return;
+    }
+    foundBankCustomer->showInfo();
+}
+
+void filterTransactionByType(){
+    string inputTypeFilter;
+    cout << "\n=== FILTER BANK TRANSACTION BY TYPE ===\n" << endl;
+    cout << "Choose transaction Type (1: Deposit, 2: Withdrawal): ";
+    int choice;
+    cin >> choice;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string filterType;
+    if (choice == 1) {
+        filterType = "Deposit";
+    } else if (choice == 2) {
+        filterType = "Withdrawal";
+    } else {
+        cout << "Invalid choice. Please enter 1 or 2\n";
+        return;
+    }
+
+    cout << "\n--- Menampilkan semua transaksi '" << filterType << "' ---\n";
+    bool isFound = false;
+    for (auto& transaction : Database::bankTransactionHistory) {
+        if (transaction.getTypeString() == filterType) {
+            transaction.printBankReceipt();
+            cout << "--------------------------------\n";
+            isFound = true;
+        }
+    }
+    if (!isFound) {
+        cout << "No transactions found with type'" << filterType << "' .\n" << endl;;
+    }
+}
+
+void listDormantAccounts() {
+    cout << "\n=== LIST DORMANT ACCOUNTS (Inactive > 30 Days) ===\n";
+    time_t now = time(0);
+    time_t cutoffTime = now - (30L * 24 * 60 * 60);
+    bool anyDormantFound = false;
+
+    for (auto& customer : Database::mainBank.getListBankCustomers()) {
+        bool hasRecentTransaction = false;
+        for (auto& transaction : Database::bankTransactionHistory) {
+            if (transaction.getCustomerId() == customer.getId() && transaction.getTimestamp() >= cutoffTime) {
+                hasRecentTransaction = true; // Ditemukan transaksi baru! Akun ini aktif.
+                break; // Tidak perlu cek transaksi lain untuk nasabah ini
+            }
+        }
+
+        // Jika setelah dicek semua, tidak ada transaksi baru, berarti dormant
+        if (!hasRecentTransaction) {
+            cout << "Acount Dormant Found:\n";
+            customer.showInfo();
+            cout << "--------------------------------\n";
+            anyDormantFound = true;
+        }
+    }
+
+    if (!anyDormantFound) {
+        cout << "There Is No Dormant Accounts.\n";
+    }
+}
+
+void listTopActiveUsersToday() {
+    cout << "\n=== LIST TOP ACTIVE USERS TODAY ===\n";
+    
+    int topN;
+    cout << "How many top users do you want to display? ";
+    while (!(cin >> topN) || topN <= 0) {
+        cout << "Invalid input. Please enter a positive number: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    time_t now = time(0);
+    tm* localtm = localtime(&now);
+    localtm->tm_hour = 0; localtm->tm_min = 0; localtm->tm_sec = 0;
+    time_t startOfToday = mktime(localtm);
+    
+    map<int, int> buyerActivity;
+
+    for (auto& transaction : Database::transactionHistory) {
+        if (transaction.getTransactionTime() >= startOfToday) {
+            buyerActivity[transaction.getBuyerId()]++;
+        }
+    }
+
+    if (buyerActivity.empty()) {
+        cout << "No transactions have occurred today.\n" << endl;
+        return;
+    }
+
+    vector<pair<int, int>> sortedBuyers(buyerActivity.begin(), buyerActivity.end());
+    sort(sortedBuyers.begin(), sortedBuyers.end(), [](const pair<int, int>& a, const pair<int, int>& b) {
+        return a.second > b.second; // Urutkan berdasarkan jumlah transaksi (value)
+    });
+
+    cout << "\n--- Top " << topN << " Most Active Users by Transaction Count ---\n";
+    int rank = 1;
+    for (const auto& buyerPair : sortedBuyers) {
+        if (rank > topN) break;
+
+        int buyerId = buyerPair.first;
+        int transactionCount = buyerPair.second;
+        
+        Buyer* buyer = Database::findBuyerById(buyerId);
+        string buyerName = (buyer != nullptr) ? buyer->getBuyerName() : "Unknown Buyer";
+
+        cout << rank << ". " << buyerName << " (ID: " << buyerId << ")\n";
+        cout << "   -> " << transactionCount << " transactions\n";
+        rank++;
+    }
+    cout << "-----------------------------------------------------\n\n";
+}
 
 
 
@@ -342,7 +660,7 @@ void handleBuyerLoginMenu(){
             showListStores();
             break;
 
-        case SHOW_INVENTORY:
+        case SHOW_INVENTORY_FOR_BUYER:
             showInventory();
             break;
         
@@ -354,11 +672,11 @@ void handleBuyerLoginMenu(){
             showAllOrders();
             break;
         
-        // case SHOW_LATEST_SPENDING:
-        //     showLatestSpending();
-        //     break;
+        case SHOW_LATEST_SPENDING:
+            showLatestSpending();
+            break;
         
-        case LOGOUT:
+        case LOGOUT_BUYER:
             inBuyerLoginMenu = false; 
             break;
         
@@ -368,6 +686,145 @@ void handleBuyerLoginMenu(){
     }
 
 };
+
+void handleSellerLoginMenu(){
+    bool inSellerLoginMenu = true;
+
+    while (inSellerLoginMenu) {
+        cout << "\n=========================================================\n";
+        cout << "                       Seller MENU\n";
+        cout << "=========================================================\n";
+        cout << "1. Show Seller Info\n";
+        cout << "2. Add Item To Inventory\n";
+        cout << "3. Update Detail Item\n";
+        cout << "4. Show Inventory\n";
+        cout << "5. Show Orders\n";
+        cout << "6. Update Order Status\n";
+        cout << "7. Show Top Items\n";
+        cout << "8. Show Loyal Customers\n";
+        cout << "9. Check Seller Balance\n";
+        cout << "10. Logout\n";
+        cout << "=========================================================\n";
+        cout << "Select option (1-10): ";
+
+        int choice;
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid input! Please enter a number (1-4).\n";
+            continue;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        SellerLoginMenuPrompt sellerLoginMenuPrompt = static_cast<SellerLoginMenuPrompt>(choice - 1);
+
+        switch (sellerLoginMenuPrompt)
+        {
+        case SHOW_SELLER_INFO:
+            showSellerInfo();
+            break;
+        
+        case ADD_ITEM:
+            addItem();
+            break;
+        
+        case UPDATE_ITEM:
+            updateItem();
+            break;
+        
+        case SHOW_INVENTORY_FOR_SELLER:
+            showMyInventory();
+            break;
+
+        case SHOW_ORDERS:
+            showAllOrders();
+            break;
+        
+        case UPDATE_ORDER_STATUS:
+            updateOrderStatus();
+            break;
+        
+        case SHOW_TOP_ITEMS:
+            showTopItems();
+            break;
+        
+        case SHOW_LOYAL_CUSTOMERS:
+            listMostActiveBuyerPerDay();
+            break;
+        
+        case CHECK_BALANCE:
+            checkSellerBalance();
+            break;
+        
+        case LOGOUT_SELLER:
+            inSellerLoginMenu = false;
+            break;
+        
+        default:
+            break;
+        }
+    }
+
+};
+
+void handleBankCapabilitiesMenu(){
+    bool inBankCapabilities = true;
+    while (inBankCapabilities) {
+        cout << "\n=========================================================\n";
+        cout << "                       BANK CAPABILITIES MENU\n";
+        cout << "=========================================================\n";
+        cout << "1. Show List All Bank Customers\n";
+        cout << "2. Search Customers By ID\n";
+        cout << "3. Show Latest Week Transaction\n";
+        cout << "4. Filter Transaction By Type\n";
+        cout << "5. Show Dormant Customers\n";
+        cout << "6. Show Top Active Users\n";
+        cout << "7. Logout\n";
+        cout << "=========================================================\n";
+        cout << "Select option (1-10): ";
+
+        int choice;
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid input! Please enter a number (1-4).\n";
+            continue;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        BankCapabilitiesPrompt bankCapabilitiesPrompt = static_cast<BankCapabilitiesPrompt>(choice - 1);
+
+        switch (bankCapabilitiesPrompt)
+        {
+        case LIST_ALL_BANK_CUSTOMERS:
+            listAllBankCustommers();
+            break;
+        case SEARCH_CUSTOMERS_BY_ID:
+            searchCustomersById();
+            break;
+        case SHOW_LATEST_WEEK_TRANSACTION:
+            listAllTransactionLastWeek();
+            break;
+        case FILTER_TRANSACTION_BY_TYPE:
+            filterTransactionByType();
+            break;
+        case SHOW_DORMANT_CUSTOMERS:
+            listDormantAccounts();
+            break;
+        case SHOW_TOP_ACTIVE_USERS:
+            listTopActiveUsersToday();
+            break;
+        case LOGOUT_BANK:
+            inBankCapabilities = false;
+            break;
+        default:
+            break;
+        }
+
+        
+
+    }
+}
 
 
 
@@ -412,14 +869,25 @@ void handleSellerLogin() {
         Database::loggedBankCustomer = foundSeller->getBuyerAccount();
         cout << "\nWelcome back, " << Database::loggedSeller->getBuyerName() << "!";
         cout << "\nLogin successful! You are logged in as a seller.\n";
-        // Di sini Anda bisa arahkan ke menu khusus seller
-        // contoh: showSellerMenu();
+        handleSellerLoginMenu();
     } else {
         cout << "\nLogin failed. Seller with name '" << name << "' not found.\n";
     }
 }
 
+void handleBankCapabilities() {
+    cout << "\n=========================================================\n";
+    cout << "                        BANK CAPABILITIES\n";
+    cout << "=========================================================\n";
 
+    if (!Database::isBankLinked){
+        cout << "Bank Customer Is Not Linked" << endl;
+        cout << "Register Bank Customer First" << endl;
+        return;
+    }
+    cout << "\nBank Customer Is Linked. Show Bank Capabilities...\n";
+    handleBankCapabilitiesMenu();
+}
 
 
 
@@ -511,7 +979,15 @@ void handleLoginMenu(){
             handleSellerLogin();
             break;
         
-        case LOGOUT:
+        case STORE_CAPABILITIES:
+            handleSellerLogin();
+            break;
+        
+        case BANK_CAPABILITIES:
+            handleBankCapabilities();
+            break;
+        
+        case LOGOUT_BUYER:
             inLoginMenu = false; 
             break;
         
