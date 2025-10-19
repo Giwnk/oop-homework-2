@@ -14,20 +14,7 @@ class Bank{
     public:
     BankCustomer* searchCustomerById(int inputId);
 
-    void addBankCustomer(BankCustomer &inputCustomer){
-        listBankCustomers.push_back(inputCustomer);
-    }
-
-    void doWithdraw(int inputAmount, int inputCustomerId){
-        BankCustomer* CustomerAccount = searchCustomerById(inputCustomerId);
-        if (!CustomerAccount)
-        {
-            cout << "ERROR: Nasabah dengan ID " << inputCustomerId << " tidak ditemukan!" << endl;
-            return;
-        } else{
-            CustomerAccount->withdraw(inputAmount);
-        }
-    }
+    void addBankCustomer(BankCustomer &inputCustomer);
 
     void doDeposit(double inputAmount, int inputCustomerId);
     void doWithdraw(double inputAmount, int inputCustomerId);
@@ -38,9 +25,7 @@ class Bank{
 
     int getTotalCustomers();
 
-    vector<BankCustomer> getListBankCustomers() {
-        return listBankCustomers;
-    }
+    vector<BankCustomer> getListBankCustomers();
 };
 
 #endif // Bank

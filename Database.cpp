@@ -1,39 +1,11 @@
-#if !defined(DATABASE)
-#define DATABASE
-
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Headers/Bank.h"
-#include "Headers/Buyer.h"
-#include "Headers/Seller.h"
-#include "Headers/Transaction.h"
-#include "Headers/BankTransaction.h"
+#include "Database.h"
 
 using namespace std;
 
-class Database{
-    public:
-    time_t now = time(0);
-    const time_t SECONDS_IN_A_DAY = 24 * 60 * 60;
-
-    inline static bool isBuyer = false;
-    inline static bool isSeller = false;
-    inline static bool isBankLinked = false;
-
-    inline static vector<Buyer*> listBuyers;
-    inline static vector<Seller*> listSellers;
-    inline static vector<Store*> listStores;
-    inline static vector<Transaction> transactionHistory;
-    inline static vector<BankTransaction> bankTransactionHistory;
-    inline static Bank mainBank;
-    inline static BankCustomer* loggedBankCustomer = nullptr;
-    inline static Buyer* loggedBuyer = nullptr;
-    inline static Seller* loggedSeller = nullptr;
-    inline static Store* newStore = nullptr;
-
-
-    static Buyer* findBuyerByName(string inputName){
+    Buyer* Database::findBuyerByName(string inputName){
         for (auto &&buyer : listBuyers)
         {
             if (buyer->getBuyerName() == inputName)
@@ -45,7 +17,7 @@ class Database{
         return nullptr;
     }
 
-    static Buyer* findBuyerById(int inputId){
+    Buyer* Database::findBuyerById(int inputId){
         for (auto &&buyer : listBuyers)
         {
             if (buyer->getBuyerID() == inputId)
@@ -57,7 +29,7 @@ class Database{
         return nullptr;
     }
 
-    static Seller* findSellerByName(string inputName){
+    Seller* Database::findSellerByName(string inputName){
         for (auto &&seller : listSellers)
         {
             if (seller->getBuyerName() == inputName)
@@ -69,7 +41,7 @@ class Database{
         return nullptr;
     }
 
-    static Item* findItemById(int itemId, Store* foundInStore) {
+    Item* Database::findItemById(int itemId, Store*& foundInStore) {
     // Loop melalui setiap toko yang ada di database
     for (Store* store : listStores) {
         // Loop melalui setiap item di dalam toko tersebut
@@ -83,7 +55,7 @@ class Database{
     return nullptr;
 }
 
-    static Transaction* findTransactionById(int transactionId) {
+    Transaction* Database::findTransactionById(int transactionId) {
         for (auto &&transaction : transactionHistory) {
             if (transaction.getTransactionId() == transactionId) {
                 return &transaction;
@@ -93,14 +65,10 @@ class Database{
     }
 
 
-    static void addBuyer(Buyer* buyer) {
+    void Database::addBuyer(Buyer* buyer) {
         listBuyers.push_back(buyer); // Menambahkan pointer buyer ke akhir vector 'buyers'
     }
-    static void addSeller(Seller* seller) {
+    void Database::addSeller(Seller* seller) {
         listSellers.push_back(seller); // Menambahkan pointer buyer ke akhir vector 'buyers'
     }
-
-};
-
-#endif // DATABASE
 

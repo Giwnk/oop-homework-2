@@ -5,19 +5,10 @@
 #include <algorithm>
 #include <tuple>
 #include <ctime>
-#include "../Services/Buyer.cpp"
-#include "../Services/BankCustomer.cpp"
-#include "../Services/Bank.cpp"
-#include "../Services/Item.cpp"
-#include "../Services/Store.cpp"
-#include "../Services/Seller.cpp"
-#include "../Services/Transaction.cpp"
-#include "../Services/BankTransaction.cpp"
-#include "../Database.cpp"
+#include <limits>
+#include "Handlers/handlers.h"
 using namespace std;
 
-
-// Helper Function
 string time_t_to_date_string(time_t timeValue) {
     char buffer[11];
     tm* timeinfo = localtime(&timeValue);
@@ -71,7 +62,7 @@ void listPendingTransactions(){
         if (transaction.getOrderStatus() == "Paid")
         {
             transaction.printReceipt();
-            bool isFound = true;
+            isFound = true;
         }
     }
 
@@ -132,7 +123,7 @@ void mostFrequentMItems(){
     sort(sortedItems.begin(), sortedItems.end(), greater<>());
 
     cout << "\n--- Top " << inputMItems << " Most Frequent Items  ---\n";
-    int itemsToShow = min((int)sortedItems.size(), inputMItems);
+    int itemsToShow = min(static_cast<int>(sortedItems.size()), inputMItems);
 
     for (int i = 0; i < itemsToShow; ++i) {
         int frequency = get<0>(sortedItems[i]);
@@ -273,5 +264,3 @@ void listWithdrawalsLatestKDays(int inputKDays) {
              << inputKDays << " Days." << endl;
     }
 }
-
-

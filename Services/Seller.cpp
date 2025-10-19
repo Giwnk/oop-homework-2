@@ -6,8 +6,8 @@
 #include "../Headers/Buyer.h"
 using namespace std;
 
-Seller::Seller(string inputPhoneNum, string inputName, string inputStoreName, string inputEmail, string inputAddress, BankCustomer* inputCustomer, Store* inputStore)
-        : Buyer(inputPhoneNum, inputName, inputEmail, inputAddress, inputCustomer), sellerId(++sellerIdCounter), associatedStore(inputStore), storeName(inputStoreName) {}
+Seller::Seller( string inputName, string inputEmail, string inputAddress, string inputPhoneNum, BankCustomer* inputCustomer, string inputStoreName, Store* inputStore)
+        : Buyer(inputPhoneNum, inputName, inputEmail, inputAddress, inputCustomer), sellerId(++sellerIdCounter), storeName(inputStoreName), associatedStore(inputStore) {}
 
     string Seller::getStoreName(){
         return storeName;
@@ -26,7 +26,7 @@ Seller::Seller(string inputPhoneNum, string inputName, string inputStoreName, st
         cout << "\n========================" << endl;
         cout << ">>> == SELLER INFO == <<< " << endl;
         cout << "========================\n" << endl;
-        cout << "Seller ID: " << getBuyerID() << endl;
+        cout << "Seller ID: " << getSellerId() << endl;
         cout << "Seller Name: " << getBuyerName() << endl;
         cout << "Seller Email: " << getBuyerEmail() << endl;
         cout << "Seller Phone Number: " << getBuyerPhoneNum() << endl;

@@ -20,7 +20,7 @@ BankCustomer* Bank::searchCustomerById(int inputId){
 
     void Bank::doWithdraw(double inputAmount, int inputCustomerId){
         BankCustomer* CustomerAccount = searchCustomerById(inputCustomerId);
-        int customerId = CustomerAccount->getId();
+        // int customerId = CustomerAccount->getId();
         if (!CustomerAccount)
         {
             cout << "ERROR: Nasabah dengan ID " << inputCustomerId << " tidak ditemukan!" << endl;
@@ -32,7 +32,7 @@ BankCustomer* Bank::searchCustomerById(int inputId){
 
     void Bank::doDeposit(double inputAmount, int inputCustomerId){
         BankCustomer* CustomerAccount = searchCustomerById(inputCustomerId);
-        int customerId = CustomerAccount->getId();
+        // int customerId = CustomerAccount->getId();
         if (!CustomerAccount)
         {
             cout << "ERROR: Nasabah dengan ID " << inputCustomerId << " tidak ditemukan!" << endl;
@@ -56,8 +56,16 @@ BankCustomer* Bank::searchCustomerById(int inputId){
         }
     }
 
+    void Bank::addBankCustomer(BankCustomer &inputCustomer){
+        listBankCustomers.push_back(inputCustomer);
+    }
+
     int Bank::getTotalCustomers(){
         int totalCustomers = listBankCustomers.size();
         return totalCustomers;
+    }
+
+    vector<BankCustomer> Bank::getListBankCustomers() {
+        return listBankCustomers;
     }
 

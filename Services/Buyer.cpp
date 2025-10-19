@@ -5,9 +5,14 @@
 #include "../Headers/Store.h"  // Pastikan Store.h juga di-include
 #include "../Headers/BankTransaction.h"
 
+
+
+Buyer::Buyer(string inputName, string inputEmail, string inputAddress, string inputPhoneNum, BankCustomer* inputCustomer) 
+    : id(++buyerIdCounter), name(inputName),email(inputEmail),address(inputAddress), phoneNumber(inputPhoneNum), customerAccount(*inputCustomer){}
+
 // Implementasi atau isi dari fungsi purchaseItem
 void Buyer::purchaseItem(int inputItemId, int inputQuantity, Store* inputStore, Seller* inputSeller, vector<Transaction>* transactionHistory){
-    if (!inputStore || !inputSeller || &customerAccount == nullptr) {
+    if (!inputStore || !inputSeller) {
         cout << "ERROR: Data toko, penjual, atau akun pembeli tidak valid." << endl;
         return;
     }
@@ -32,11 +37,11 @@ void Buyer::purchaseItem(int inputItemId, int inputQuantity, Store* inputStore, 
     if (customerAccount.withdraw(totalPrice))
     {
         BankCustomer* sellerAccount = inputSeller->getBuyerAccount();
-        if (&sellerAccount != nullptr)
+        if (sellerAccount != nullptr)
         {
             sellerAccount->deposit(totalPrice);
             item->reduceQuantity(inputQuantity);
-            transactionHistory->emplace_back(totalPrice, this->id, inputSeller->getBuyerID(), item->getItemId(), inputQuantity, item->getItemName(), inputSeller->getStoreName());
+            transactionHistory->emplace_back(totalPrice, this->id, inputSeller->getSellerId(), item->getItemId(), inputQuantity, item->getItemName(), inputSeller->getStoreName());
             
             cout << "Pembelian berhasil." << endl;
         }else{
@@ -48,4 +53,20 @@ void Buyer::purchaseItem(int inputItemId, int inputQuantity, Store* inputStore, 
         cout << "ERROR: Transaksi gagal." << endl;
         return;
     }
+
+}
+void  Buyer::showInfoBuyer(){
+    cout << "\n========================" << endl;
+    cout << ">>> == BUYER INFO == <<< " << endl;
+    cout << "========================\n" << endl;
+    cout << "Buyer ID: " << getBuyerID() << endl;
+    cout << "Buyer Name: " << getBuyerName() << endl;
+    cout << "Buyer Email: " << getBuyerEmail() << endl;
+    cout << "Buyer Phone Number: " << getBuyerPhoneNum() << endl;
+    cout << "Buyer Address: " << getBuyerAddress() << endl;
+    
+        cout << "This Buyer linked with Bank Account" << endl;
+        customerAccount.showInfo();
+        cout << "\n" << endl;
+    
 }

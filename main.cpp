@@ -4,8 +4,8 @@
 #include <limits>
 #include <cstdlib>
 
-#include "Database.cpp"
-#include "Handlers/handlers.cpp"
+#include "Database.h"
+#include "Handlers/handlers.h"
 using namespace std;
 
 enum PrimaryPrompt {
@@ -168,7 +168,7 @@ bool handleRegisterAsSeller(){
     getline(cin, storeName);
 
     Store* newStore = new Store(storeName);
-    Seller* newSeller = new Seller(phoneNum, name, storeName, email, address, Database::loggedBankCustomer, newStore);
+    Seller* newSeller = new Seller(name, email, address,phoneNum, Database::loggedBankCustomer,storeName, newStore);
     newStore->setAssociatedSeller(newSeller);
     Database::loggedSeller = newSeller;
     Database::addSeller(Database::loggedSeller);
@@ -236,7 +236,7 @@ void upgradeToSeller(){
         getline(cin, storeName);
 
         Database::newStore = new Store(storeName);
-        Database::loggedSeller = new Seller(phoneNum, name, storeName, email, address, Database::loggedBankCustomer, Database::newStore);
+        Database::loggedSeller = new Seller( name, email, address, phoneNum, Database::loggedBankCustomer, storeName, Database::newStore);
         Database::addSeller(Database::loggedSeller);
         Database::isSeller = true;
         cout << "\nSeller Registered Successfully!\n";
@@ -290,11 +290,11 @@ void purchaseItem(){
     int inputItemId, inputQuantity;
     cout << "Input ID Item That You Want To Purchase: ";
     cin >> inputItemId;
-    cout << "Input ID Item That You Want To Purchase: ";
-    cin >> inputItemId;
+    cout << "Input Item Quantity That You Want To Purchase: ";
+    cin >> inputQuantity;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    Store* targetStore;
+    Store* targetStore = nullptr;
     Item* foundItem = Database::findItemById(inputItemId, targetStore);
     if (foundItem == nullptr)
     {
@@ -1036,7 +1036,7 @@ void handleLoginMenu(){
             handleBankCapabilities();
             break;
         
-        case LOGOUT_BUYER:
+        case LOGIN_BACK:
             inLoginMenu = false; 
             break;
         

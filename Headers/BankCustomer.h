@@ -6,6 +6,9 @@
 #include "BankTransaction.h"
 using namespace std;
 
+
+class BankTransaction;
+
 class BankCustomer{
     private:
     int static inline idBankCustomerCounter;
@@ -26,9 +29,7 @@ class BankCustomer{
 
     void showInfo();
     void showAllReceipt();
-    vector<BankTransaction> getBankTransactionHistory(){
-        return listbankTransaction;
-    }
+    vector<BankTransaction> getBankTransactionHistory();
 };
 
 #endif

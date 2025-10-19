@@ -54,4 +54,8 @@ using namespace std;
         
     }
 
+    vector<BankTransaction> BankCustomer::getBankTransactionHistory(){
+        return listbankTransaction;
+    }
+
 
