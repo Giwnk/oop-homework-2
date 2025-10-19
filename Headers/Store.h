@@ -27,7 +27,7 @@ class Store{
     void setAssociatedSeller(Seller* inputAssociatedSeller);
     Seller* getAssociatedSeller();
 
-    void addItem(Item &inputItem);
+    void addItem(Item* inputItem);
 
     void showDetailStore();
 

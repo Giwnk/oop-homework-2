@@ -41,8 +41,8 @@ Store::Store(string inputStoreName){
         return associatedSeller;
     }
 
-    void Store::addItem(Item &inputItem){
-        inventoryItems.push_back(&inputItem);
+    void Store::addItem(Item *inputItem){
+        inventoryItems.push_back(inputItem);
     }
 
     void Store::showDetailStore(){

@@ -109,7 +109,7 @@ bool handleRegisterAsBuyer() {
     cout << "Input Your Phone Number   : ";
     getline(cin, phoneNum);
 
-    Database::loggedBuyer = new Buyer(phoneNum, name, email, address, Database::loggedBankCustomer);
+    Database::loggedBuyer = new Buyer(name, email, address, phoneNum, Database::loggedBankCustomer);
     Database::addBuyer(Database::loggedBuyer);
     Database::isBuyer = true;
     cout << "\nBuyer Registered Successfully!\n";
@@ -168,7 +168,7 @@ bool handleRegisterAsSeller(){
     getline(cin, storeName);
 
     Store* newStore = new Store(storeName);
-    Seller* newSeller = new Seller(name, email, address,phoneNum, Database::loggedBankCustomer,storeName, newStore);
+    Seller* newSeller = new Seller(name, email, address, phoneNum, Database::loggedBankCustomer,storeName, newStore);
     newStore->setAssociatedSeller(newSeller);
     Database::loggedSeller = newSeller;
     Database::addSeller(Database::loggedSeller);
@@ -365,7 +365,7 @@ void addItem(){
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     Item* newItem = new Item(itemName, itemPrice, itemQuantity);
-    Database::newStore->addItem(*newItem);
+    Database::newStore->addItem(newItem);
     cout << "\nItem Added Successfully!\n";
 }
 
@@ -882,7 +882,7 @@ void handleBuyerLogin() {
     
     string name;
     cout << "Enter your name to login: ";
-    getline(cin, name);
+    getline(cin >> ws, name);
 
     Buyer* foundBuyer = Database::findBuyerByName(name);
 
@@ -972,6 +972,7 @@ void handleRegisterMenu() {
             case REGISTER_AS_BUYER:
                 handleRegisterAsBuyer();
                 break;
+            
 
             case REGISTER_AS_SELLER:
                 handleRegisterAsSeller();
@@ -1050,6 +1051,8 @@ void handleLoginMenu(){
 /// Main Program
 /// =============================================================
 int main() {
+    Database::seedData();
+    
     PrimaryPrompt primaryPrompt = MAIN_PROMPT;
     int choice;
 

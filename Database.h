@@ -21,7 +21,7 @@ class Database{
     inline static bool isSeller = false;
     inline static bool isBankLinked = false;
 
-    inline static vector<Buyer*> listBuyers;
+    static vector<Buyer*> listBuyers;
     inline static vector<Seller*> listSellers;
     inline static vector<Store*> listStores;
     inline static vector<Transaction> transactionHistory;
@@ -34,18 +34,16 @@ class Database{
 
 
     static Buyer* findBuyerByName(string inputName);
-
     static Buyer* findBuyerById(int inputId);
-
     static Seller* findSellerByName(string inputName);
-
     static Item* findItemById(int itemId, Store*& foundInStore);
-
     static Transaction* findTransactionById(int transactionId);
-
-
     static void addBuyer(Buyer* buyer);
     static void addSeller(Seller* seller);
+    static void addStore(Store* store);
+    static void addBankCustomer(BankCustomer* customer);
+
+    static void seedData();
 
 };
 
