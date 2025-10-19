@@ -67,6 +67,15 @@ enum BankCapabilitiesPrompt{
 
 };
 
+enum StoreCapabilitiesPrompt{
+    LIST_ALL_TRANSACTION_OF_THE_LATEST_K_DAYS,
+    LIST_ALL_PENDING_TRANSACTIONS,
+    LIST_MOST_FREQUENT_M_ITEMS,
+    LIST_MOST_ACTIVE_BUYERS_PER_DAY,
+    LIST_MOST_ACTIVE_SELLERS_PER_DAY,
+    LOGOUT_STORE
+};
+
 
 /// =============================================================
 /// Utility Functions
@@ -436,22 +445,6 @@ void updateOrderStatus(){
 
 }
 
-void showTopItems(){
-    if (Database::transactionHistory.empty())
-    {
-        cout << "Transaction History is empty.\n" << endl;
-        return;
-    }
-
-    int inputMItems;
-    cout << "\n=== SHOW TOP ITEMS ===\n" << endl;
-    cout << "Input M Items: ";
-    cin >> inputMItems;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-    mostFrequentMItems(inputMItems);
-}
-
 void checkSellerBalance(){
     cout << "\n=== CHECK SELLER BALANCE ===\n" << endl;
     Database::loggedSeller->getBuyerAccount()->showInfo();
@@ -745,7 +738,7 @@ void handleSellerLoginMenu(){
             break;
         
         case SHOW_TOP_ITEMS:
-            showTopItems();
+            mostFrequentMItems();
             break;
         
         case SHOW_LOYAL_CUSTOMERS:
@@ -781,7 +774,7 @@ void handleBankCapabilitiesMenu(){
         cout << "6. Show Top Active Users\n";
         cout << "7. Logout\n";
         cout << "=========================================================\n";
-        cout << "Select option (1-10): ";
+        cout << "Select option (1-7): ";
 
         int choice;
         if (!(cin >> choice)) {
@@ -826,7 +819,57 @@ void handleBankCapabilitiesMenu(){
     }
 }
 
+void handleStoreCapabilitiesMenu(){
+    bool inStoreCapabilities = true;
+    while (inStoreCapabilities) {
+        cout << "\n=========================================================\n";
+        cout << "                       STORE CAPABILITIES MENU\n";
+        cout << "=========================================================\n";
+        cout << "1. Show List All Transaction Of The Latest K Days\n";
+        cout << "2. List All Pending Transactions\n";
+        cout << "3. List Most Frequent M Items\n";
+        cout << "4. List Most Active Buyers Per Day\n";
+        cout << "5. List Most Active Sellers Per Day\n";
+        cout << "6. Logout\n";
+        cout << "=========================================================\n";
+        cout << "Select option (1-6): ";
 
+        int choice;
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid input! Please enter a number (1-4).\n";
+            continue;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        StoreCapabilitiesPrompt storeCapabilitiesPrompt = static_cast<StoreCapabilitiesPrompt>(choice - 1);
+
+        switch (storeCapabilitiesPrompt)
+        {
+        case LIST_ALL_TRANSACTION_OF_THE_LATEST_K_DAYS:
+            listTransactionLatestKDays();
+            break;
+        case LIST_ALL_PENDING_TRANSACTIONS:
+            listPendingTransactions();
+            break;
+        case LIST_MOST_FREQUENT_M_ITEMS:
+            mostFrequentMItems();
+            break;
+        case LIST_MOST_ACTIVE_BUYERS_PER_DAY:
+            listMostActiveBuyerPerDay();
+            break;
+        case LIST_MOST_ACTIVE_SELLERS_PER_DAY:
+            listMostActiveSellerPerDay();
+            break;
+        case LOGOUT_STORE:
+            inStoreCapabilities = false;
+            break;
+        default:
+            break;
+        }
+    }
+}
 
 /// =============================================================
 /// Login Handlers
@@ -889,7 +932,13 @@ void handleBankCapabilities() {
     handleBankCapabilitiesMenu();
 }
 
+void handleStoreCapabilities() {
+    cout << "\n=========================================================\n";
+    cout << "                        STORE CAPABILITIES\n";
+    cout << "=========================================================\n";
 
+    handleStoreCapabilitiesMenu();
+}
 
 /// =============================================================
 /// Menus
@@ -1045,5 +1094,7 @@ int main() {
         }
     }
 
+
+    
     return 0;
 }

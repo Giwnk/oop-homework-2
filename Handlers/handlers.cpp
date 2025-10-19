@@ -26,8 +26,26 @@ string time_t_to_date_string(time_t timeValue) {
 }
 
 // Store Handlers
+void listTransactionLatestKDays(){
+    int inputKDays;
+    cout << "\n=== Show Latest Transaction In The Latest K Days ===\n";
+    if (Database::transactionHistory.empty())
+    {
+        cout << "Transaction History is empty.\n" << endl;
+        return;
+    }
 
-void listTransactionLatestKDays(int inputKDays){
+    cout << "How Many Days You Want To See: ";
+    cin >> inputKDays;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    if (inputKDays <= 0)
+    {
+        cout << "Invalid Input. Input Must Larger Than 0.\n" << endl;
+        return;
+    }
+
+
     time_t now = time(0);
     time_t cutoffTime = now - (inputKDays * 24 * 60 * 60);
 
@@ -63,9 +81,23 @@ void listPendingTransactions(){
     }
 }
 
-void mostFrequentMItems(int inputMItems){
+void mostFrequentMItems(){
+    if (Database::transactionHistory.empty())
+    {
+        cout << "Transaction History is empty.\n" << endl;
+        return;
+    }
+
+    int inputMItems;
+    cout << "\n=== Show Most Frequent M Items ===\n";
+
+    cout << "How Many Items You Want To See: ";
+    cin >> inputMItems;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     if (inputMItems <= 0)
     {
+        cout << "Invalid Input. Input Must Larger Than 0.\n" << endl;
         return;
     }
 
@@ -216,7 +248,6 @@ void listAllTransactionLastWeek(){
         cout << "No transactions found within the last weeks " << endl;
     }
 }
-
 
 void listWithdrawalsLatestKDays(int inputKDays) {
     time_t now = time(0);
