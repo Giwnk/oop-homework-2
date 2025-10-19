@@ -3,9 +3,7 @@
 #include <string>
 #include <ctime>
 #include "Database.cpp"
-#include "Headers/Bank.h"
-#include "Headers/BankCustomer.h"
-#include "Handlers/handlers.cpp"
+#include "Handlers/handlers.h"
 using namespace std;
 
 

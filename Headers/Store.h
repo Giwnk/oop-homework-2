@@ -6,6 +6,7 @@
 #include "Item.h"
 using namespace std;
 
+class Seller;
 
 class Store{
     private:
@@ -23,7 +24,7 @@ class Store{
     int getAmountItem();
     Item* searchItemById(int inputItemId);
     vector<Item*> getInventoryItems();
-    Seller* setAssociatedSeller(Seller* inputAssociatedSeller);
+    void setAssociatedSeller(Seller* inputAssociatedSeller);
     Seller* getAssociatedSeller();
 
     void addItem(Item &inputItem);

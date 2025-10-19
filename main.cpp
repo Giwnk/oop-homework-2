@@ -28,7 +28,7 @@ enum LoginPrompt{
     LOGIN_AS_SELLER,
     BANK_CAPABILITIES,
     STORE_CAPABILITIES,
-    LOGOUT
+    LOGIN_BACK
 };
 
 enum BuyerLoginMenuPrompt{
@@ -142,7 +142,6 @@ bool handleRegisterAsSeller(){
     cout << "\nSeller Registered Successfully!\n";
     return true;
 }
-
 
 void checkAccountStatus(){
     cout << "\n[INFO] Check Account Status selected." << endl;
@@ -277,6 +276,20 @@ void showAllOrders(){
     
 }
 
+// void showLatestSpending() {
+//     int inputDays;
+//     cout << "\n=== SHOW LATEST SPENDING ===\n" << endl;
+//     cout << "Input Days : ";
+//     cin >> inputDays;
+//     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+//     listWithdrawalsLatestKDays(inputDays);
+
+// }
+
+
+
+
 /// =============================================================
 /// Login Menu Handlers
 /// =============================================================
@@ -288,9 +301,15 @@ void handleBuyerLoginMenu(){
         cout << "\n=========================================================\n";
         cout << "                       BUYER MENU\n";
         cout << "=========================================================\n";
-        cout << "1. Login As Buyer\n";
-        cout << "2. Login As Seller\n";
-        cout << "3. Logout\n";
+        cout << "1. Check Account Status\n";
+        cout << "2. Upgrade to Seller\n";
+        cout << "3. Show Buyer Info\n";
+        cout << "4. Show List Stores\n";
+        cout << "5. Show Inventory\n";
+        cout << "6. Purchase Item\n";
+        cout << "7. Show All Orders\n";
+        cout << "8. Show Latest Spending\n";
+        cout << "9. Logout\n";
         cout << "=========================================================\n";
         cout << "Select option (1-4): ";
 
@@ -335,9 +354,9 @@ void handleBuyerLoginMenu(){
             showAllOrders();
             break;
         
-        case SHOW_LATEST_SPENDING:
-            handleSellerLogin();
-            break;
+        // case SHOW_LATEST_SPENDING:
+        //     showLatestSpending();
+        //     break;
         
         case LOGOUT:
             inBuyerLoginMenu = false; 
@@ -371,8 +390,7 @@ void handleBuyerLogin() {
         Database::loggedBuyer = foundBuyer;
         cout << "\nWelcome back, " << Database::loggedBuyer->getBuyerName() << "!";
         cout << "\nLogin successful!\n";
-        // Di sini Anda bisa arahkan ke menu khusus buyer
-        // contoh: showBuyerMenu();
+        handleBuyerLoginMenu();
     } else {
         cout << "\nLogin failed. Buyer with name '" << name << "' not found.\n";
     }

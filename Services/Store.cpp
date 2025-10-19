@@ -33,7 +33,7 @@ Store::Store(string inputStoreName){
         return inventoryItems;
     }
 
-    Seller* Store::setAssociatedSeller(Seller* inputAssociatedSeller){
+    void Store::setAssociatedSeller(Seller* inputAssociatedSeller){
         associatedSeller = inputAssociatedSeller;
     }
 
@@ -42,7 +42,7 @@ Store::Store(string inputStoreName){
     }
 
     void Store::addItem(Item &inputItem){
-        inventoryItems.emplace_back(inputItem);
+        inventoryItems.push_back(&inputItem);
     }
 
     void Store::showDetailStore(){

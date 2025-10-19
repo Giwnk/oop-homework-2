@@ -50,7 +50,7 @@ void listPendingTransactions(){
     bool isFound = false;
     for (auto &&transaction : Database::transactionHistory)
     {
-        if (transaction.getOrderStatus() == OrderStatus::PAID)
+        if (transaction.getOrderStatus() == "Paid")
         {
             transaction.printReceipt();
             bool isFound = true;
@@ -214,6 +214,32 @@ void listAllTransactionLastWeek(){
     if (!isFound)
     {
         cout << "No transactions found within the last weeks " << endl;
+    }
+}
+
+
+void listWithdrawalsLatestKDays(int inputKDays) {
+    time_t now = time(0);
+    time_t cutoffTime = now - (static_cast<time_t>(inputKDays) * 24 * 60 * 60);
+
+    cout << "\n--- Show Latest Spending In The Last " << inputKDays << " Days ---\n";
+
+    bool isFound = false;
+    for ( auto& bankTransaction : Database::bankTransactionHistory) {
+        
+        
+        if (bankTransaction.getTimestamp() >= cutoffTime && 
+            bankTransaction.getTypeString() == "Withdrawal") 
+        {
+            bankTransaction.printBankReceipt();
+            cout << "----------------------------------------\n";
+            isFound = true;
+        } 
+    }
+
+    if (!isFound) {
+        cout << "No Transaction Found In The Last" 
+             << inputKDays << " Days." << endl;
     }
 }
 
