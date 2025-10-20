@@ -40,4 +40,46 @@ void listAllTransactionLastWeek();
 
 void listWithdrawalsLatestKDays(int inputKDays);
 
+void listAllBankCustommers();
 
+void searchCustomersById();
+
+void filterTransactionByType();
+
+void listDormantAccounts();
+
+void listTopActiveUsersToday();
+
+/// =============================================================
+/// Buyer Handlers
+void checkAccountStatus();
+
+void upgradeToSeller();
+
+void showBuyerInfo();
+
+void showListStores();
+
+void showInventory();
+
+void purchaseItem();
+
+void showAllOrders();
+
+void showLatestSpending();
+
+/// =============================================================
+/// Seller Handlers
+void showSellerInfo();
+
+void addItem();
+
+void updateItem();
+
+void showMyInventory();
+
+void updateOrderStatus();
+
+void checkSellerBalance();
+
+/// =============================================================
