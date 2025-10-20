@@ -181,6 +181,7 @@ void handleBuyerLoginMenu(){
     bool inBuyerLoginMenu = true;
 
     while (inBuyerLoginMenu) {
+        clearScreen();
         cout << "\n=========================================================\n";
         cout << "                       BUYER MENU\n";
         cout << "=========================================================\n";
@@ -194,7 +195,7 @@ void handleBuyerLoginMenu(){
         cout << "8. Show Latest Spending\n";
         cout << "9. Logout\n";
         cout << "=========================================================\n";
-        cout << "Select option (1-4): ";
+        cout << "Select option (1-9): ";
 
         int choice;
         if (!(cin >> choice)) {
@@ -273,6 +274,7 @@ void handleSellerLoginMenu(){
     bool inSellerLoginMenu = true;
 
     while (inSellerLoginMenu) {
+        clearScreen();
         cout << "\n=========================================================\n";
         cout << "                       Seller MENU\n";
         cout << "=========================================================\n";
@@ -371,6 +373,7 @@ void handleBankCapabilitiesMenu(){
     clearScreen();
     bool inBankCapabilities = true;
     while (inBankCapabilities) {
+        clearScreen();
         cout << "\n=========================================================\n";
         cout << "                       BANK CAPABILITIES MENU\n";
         cout << "=========================================================\n";
@@ -443,6 +446,7 @@ void handleStoreCapabilitiesMenu(){
     clearScreen();
     bool inStoreCapabilities = true;
     while (inStoreCapabilities) {
+        clearScreen();
         cout << "\n=========================================================\n";
         cout << "                       STORE CAPABILITIES MENU\n";
         cout << "=========================================================\n";
@@ -523,7 +527,7 @@ void handleBuyerLogin() {
         cout << "\nLogin successful!\n";
         handleBuyerLoginMenu();
     } else {
-        cout << "\nLogin failed. Buyer with name '" << name << "' not found.\n";
+        cout << "\nLogin failed. Buyer with name '" << name << "' not found. Do A Register First\n";
     }
 }
 
@@ -545,7 +549,7 @@ void handleSellerLogin() {
         cout << "\nLogin successful! You are logged in as a seller.\n";
         handleSellerLoginMenu();
     } else {
-        cout << "\nLogin failed. Seller with name '" << name << "' not found.\n";
+        cout << "\nLogin failed. Seller with name '" << name << "' not found. Do A Register First\n";
     }
 }
 
@@ -579,6 +583,7 @@ void handleRegisterMenu() {
     bool inRegisterMenu = true;
 
     while (inRegisterMenu) {
+        clearScreen();
         cout << "\n=========================================================\n";
         cout << "                       REGISTER MENU\n";
         cout << "=========================================================\n";
@@ -632,10 +637,10 @@ void handleRegisterMenu() {
 }
 
 void handleLoginMenu(){
-    clearScreen();
     bool inLoginMenu = true;
 
     while (inLoginMenu) {
+        clearScreen();
         cout << "\n=========================================================\n";
         cout << "                       LOGIN MENU\n";
         cout << "=========================================================\n";
@@ -645,7 +650,7 @@ void handleLoginMenu(){
         cout << "4. Store Capabilities\n";
         cout << "5. Back To Main Menu\n";
         cout << "=========================================================\n";
-        cout << "Select option (1-4): ";
+        cout << "Select option (1-5): ";
 
         int choice;
         if (!(cin >> choice)) {
@@ -704,6 +709,7 @@ int main() {
     int choice;
 
     while (primaryPrompt != EXIT_PROGRAM) {
+        clearScreen();
         cout << "\n=========================================================\n";
         cout << "               WELCOME TO MINI BANK SYSTEM\n";
         cout << "=========================================================\n";
