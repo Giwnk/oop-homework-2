@@ -18,7 +18,11 @@
 using namespace std;
 
 
-// Helper Function
+// Utility Handlers
+void clearScreen();
+
+void pressEnterToContinue();
+
 string time_t_to_date_string(time_t timeValue);
 
 // Store Handlers

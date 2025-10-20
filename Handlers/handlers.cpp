@@ -9,6 +9,24 @@
 #include "Handlers/handlers.h"
 using namespace std;
 
+/// =============================================================
+// Utility Handlers
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+void pressEnterToContinue() {
+    cout << "\nPress ENTER to continue...";
+    // Perintah ini akan membersihkan sisa input JIKA ADA,
+    // atau akan MENUNGGU input Enter JIKA buffer bersih.
+    // Sangat aman dan serbaguna.
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
 string time_t_to_date_string(time_t timeValue) {
     char buffer[11];
     tm* timeinfo = localtime(&timeValue);
@@ -18,12 +36,14 @@ string time_t_to_date_string(time_t timeValue) {
 
 /// =============================================================
 // Store Handlers
+
 void listTransactionLatestKDays(){
     int inputKDays;
     cout << "\n=== Show Latest Transaction In The Latest K Days ===\n";
     if (Database::transactionHistory.empty())
     {
         cout << "Transaction History is empty.\n" << endl;
+        pressEnterToContinue();
         return;
     }
 
@@ -34,6 +54,7 @@ void listTransactionLatestKDays(){
     if (inputKDays <= 0)
     {
         cout << "Invalid Input. Input Must Larger Than 0.\n" << endl;
+        pressEnterToContinue();
         return;
     }
 
@@ -53,6 +74,7 @@ void listTransactionLatestKDays(){
     if (!isFound)
     {
         cout << "No transactions found within the last " << inputKDays << " days." << endl;
+        
     }
 }
 
@@ -77,6 +99,7 @@ void mostFrequentMItems(){
     if (Database::transactionHistory.empty())
     {
         cout << "Transaction History is empty.\n" << endl;
+        pressEnterToContinue();
         return;
     }
 
@@ -109,6 +132,7 @@ void mostFrequentMItems(){
 
     if (itemFrequency.empty()) {
         cout << "No Transactions Found.\n" << endl;
+        pressEnterToContinue();
         return;
     }
 
@@ -134,12 +158,10 @@ void mostFrequentMItems(){
         cout << (i + 1) << ". " << name << " (ID: " << id << ")\n";
         cout << "   -> Bought As : " << frequency << " Times\n";
     }
-    cout << "----------------------------------------------\n\n";
-    
 }
 
 void listMostActiveBuyerPerDay() {
-    cout << "\n--- Laporan Pembeli Teraktif per Hari ---\n";
+    cout << "\n=== MOST ACTIVE BUYER PER DAY ===\n";
     map<string, map<int, int>> dailyActivity;
 
     for (auto& transaction : Database::transactionHistory) {
@@ -149,8 +171,9 @@ void listMostActiveBuyerPerDay() {
     }
 
     if (dailyActivity.empty()) {
-        cout << "Belum ada transaksi untuk dianalisis.\n";
+        cout << "No transactions found for analysis.\n";
         cout << "------------------------------------------\n\n";
+        pressEnterToContinue();
         return;
     }
 
@@ -161,7 +184,7 @@ void listMostActiveBuyerPerDay() {
         int topBuyerId = -1;
         int maxTransactions = 0;
 
-        for (const auto& buyerPair : buyerCounts) {
+        for (auto& buyerPair : buyerCounts) {
             int buyerId = buyerPair.first;
             int count = buyerPair.second;
 
@@ -172,14 +195,13 @@ void listMostActiveBuyerPerDay() {
         }
 
 
-        cout << "-> Pada tanggal " << date << ", pembeli teraktif adalah ID "
-             << topBuyerId << " dengan " << maxTransactions << " transaksi.\n";
+        cout << "-> On " << date << ", Most Active Buyer is ID "
+             << topBuyerId << " with " << maxTransactions << " Transaction.\n";
     }
-    cout << "------------------------------------------\n\n";
 }
 
 void listMostActiveSellerPerDay() {
-    cout << "\n--- Laporan Penual Teraktif per Hari ---\n";
+    cout << "\n=== MOST ACTIVE SELLER PER DAY ===\n";
     map<string, map<int, int>> dailyActivity;
 
     for (auto& transaction : Database::transactionHistory) {
@@ -189,8 +211,9 @@ void listMostActiveSellerPerDay() {
     }
 
     if (dailyActivity.empty()) {
-        cout << "Belum ada transaksi untuk dianalisis.\n";
+        cout << "No transactions found for analysis.\n";
         cout << "------------------------------------------\n\n";
+        pressEnterToContinue();
         return;
     }
 
@@ -212,10 +235,11 @@ void listMostActiveSellerPerDay() {
         }
 
 
-        cout << "-> Pada tanggal " << date << ", pembeli teraktif adalah ID "
-             << topSellerId << " dengan " << maxTransactions << " transaksi.\n";
+        cout << "-> On " << date << ", Most Active Seller is ID "
+             << topSellerId << " With " << maxTransactions << " Transaction.\n";
     }
     cout << "------------------------------------------\n\n";
+    pressEnterToContinue();
 }
 
 /// =============================================================
@@ -243,7 +267,7 @@ void listWithdrawalsLatestKDays(int inputKDays) {
     time_t now = time(0);
     time_t cutoffTime = now - (static_cast<time_t>(inputKDays) * 24 * 60 * 60);
 
-    cout << "\n--- Show Latest Spending In The Last " << inputKDays << " Days ---\n";
+    cout << "\n=== Show Latest Spending In The Last " << inputKDays << " Days ===\n";
 
     bool isFound = false;
     for ( auto& bankTransaction : Database::bankTransactionHistory) {
@@ -268,6 +292,7 @@ void listAllBankCustommers(){
     if (Database::mainBank.getListBankCustomers().empty())
     {
         cout << "Bank Customer is empty.\n" << endl;
+        pressEnterToContinue();
         return;
     }
     
@@ -289,6 +314,8 @@ void searchCustomersById(){
     if (foundBankCustomer == nullptr)
     {
         cout << "\nBank Customer With ID " << inputId << " Not Found.\n" << endl;
+        cout << "-----------------------------------------------------\n\n";
+        pressEnterToContinue();
         return;
     }
     foundBankCustomer->showInfo();
@@ -309,10 +336,11 @@ void filterTransactionByType(){
         filterType = "Withdrawal";
     } else {
         cout << "Invalid choice. Please enter 1 or 2\n";
+        pressEnterToContinue();
         return;
     }
 
-    cout << "\n--- Menampilkan semua transaksi '" << filterType << "' ---\n";
+    cout << "\n--- Show Transactions With Type'" << filterType << "' ---\n";
     bool isFound = false;
     for (auto& transaction : Database::bankTransactionHistory) {
         if (transaction.getTypeString() == filterType) {
@@ -337,11 +365,10 @@ void listDormantAccounts() {
         for (auto& transaction : Database::bankTransactionHistory) {
             if (transaction.getCustomerId() == customer.getId() && transaction.getTimestamp() >= cutoffTime) {
                 hasRecentTransaction = true; // Ditemukan transaksi baru! Akun ini aktif.
-                break; // Tidak perlu cek transaksi lain untuk nasabah ini
+                break;
             }
         }
 
-        // Jika setelah dicek semua, tidak ada transaksi baru, berarti dormant
         if (!hasRecentTransaction) {
             cout << "Acount Dormant Found:\n";
             customer.showInfo();
@@ -382,12 +409,13 @@ void listTopActiveUsersToday() {
 
     if (buyerActivity.empty()) {
         cout << "No transactions have occurred today.\n" << endl;
+        pressEnterToContinue();
         return;
     }
 
     vector<pair<int, int>> sortedBuyers(buyerActivity.begin(), buyerActivity.end());
     sort(sortedBuyers.begin(), sortedBuyers.end(), [](const pair<int, int>& a, const pair<int, int>& b) {
-        return a.second > b.second; // Urutkan berdasarkan jumlah transaksi (value)
+        return a.second > b.second;
     });
 
     cout << "\n--- Top " << topN << " Most Active Users by Transaction Count ---\n";
@@ -405,7 +433,6 @@ void listTopActiveUsersToday() {
         cout << "   -> " << transactionCount << " transactions\n";
         rank++;
     }
-    cout << "-----------------------------------------------------\n\n";
 }
 
 /// =============================================================
@@ -480,6 +507,7 @@ void showListStores(){
     if (Database::listStores.empty())
     {
         cout << "Store is empty.\n" << endl;
+        pressEnterToContinue();
         return;
     }
     for (auto &&store : Database::listStores)
@@ -495,6 +523,7 @@ void showInventory(){
     if (Database::listStores.empty())
     {
         cout << "Store is empty.\n" << endl;
+        pressEnterToContinue();
         return;
     }
     
@@ -527,6 +556,7 @@ void purchaseItem(){
     if (foundItem == nullptr)
     {
         cout << "\nItem With ID " << inputItemId << " Not Found In Any Store.\n" << endl;
+        pressEnterToContinue();
         return;
     }
 
@@ -550,7 +580,7 @@ void showAllOrders(){
     }
 
     if (ordersFound == 0) {
-        cout << "\nTidak ada pesanan yang ditemukan.\n";
+        cout << "\nNo Transaction Found With Status '" << inputStatusFilter << "'\n" << endl;
     }
 
     
@@ -559,6 +589,7 @@ void showAllOrders(){
 void showLatestSpending() {
     if (Database::bankTransactionHistory.empty()){
         cout << "Bank Transaction History is empty.\n" << endl;
+        pressEnterToContinue();
         return;
     }
 
@@ -606,6 +637,7 @@ void updateItem(){
     if (foundItem == nullptr)
     {
         cout << "\nItem With ID " << inputItemId << " Not Found In Store.\n" << endl;
+        pressEnterToContinue();
         return;
     }
 
@@ -633,6 +665,7 @@ void showMyInventory(){
     if (Database::newStore == nullptr)
     {
         cout << "Store is empty.\n" << endl;
+        pressEnterToContinue();
         return;
     }
     Database::newStore->showInventory();
@@ -643,6 +676,7 @@ void updateOrderStatus(){
     if (Database::transactionHistory.empty())
     {
         cout << "Transaction History is empty.\n" << endl;
+        pressEnterToContinue();
         return;
     }
 
@@ -656,6 +690,7 @@ void updateOrderStatus(){
     if (foundTransaction == nullptr)
     {
         cout << "\nTransaction With ID " << inputTransactionId << " Not Found.\n" << endl;
+        pressEnterToContinue();
         return;
     }
 

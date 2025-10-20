@@ -78,31 +78,10 @@ enum StoreCapabilitiesPrompt{
 
 
 /// =============================================================
-/// Utility Functions
-/// =============================================================
-
-
-void clearScreen() {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
-
-void pressEnterToContinue() {
-    cout << "\nPress ENTER to continue...";
-    // Perintah ini akan membersihkan sisa input JIKA ADA,
-    // atau akan MENUNGGU input Enter JIKA buffer bersih.
-    // Sangat aman dan serbaguna.
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-}
-
-/// =============================================================
 /// Register Handlers
 /// =============================================================
 
-bool handleRegisterAsBuyer() {
+void handleRegisterAsBuyer() {
     
     string name, email, address, phoneNum;
 
@@ -113,7 +92,8 @@ bool handleRegisterAsBuyer() {
     if (Database::loggedBankCustomer == nullptr) {
         cout << "\nYou don't have a Bank Customer account.\n";
         cout << "   Please register as Bank Customer first.\n";
-        return false;
+        pressEnterToContinue();
+        return;
     }
 
     cout << "Input Your Name           : ";
@@ -130,10 +110,9 @@ bool handleRegisterAsBuyer() {
     Database::addBuyer(Database::loggedBuyer);
     Database::isBuyer = true;
     cout << "\nBuyer Registered Successfully!\n";
-    return true;
 }
 
-bool handleRegisterBankCustomer() {
+void handleRegisterBankCustomer() {
     string name;
     double balance;
 
@@ -157,10 +136,9 @@ bool handleRegisterBankCustomer() {
     Database::isBankLinked = true;
 
     cout << "\nBank Customer Registered Successfully!\n";
-    return true;
 }
 
-bool handleRegisterAsSeller(){
+void handleRegisterAsSeller(){
     string name, email, address, phoneNum, storeName;
 
     cout << "=========================================================\n";
@@ -170,7 +148,8 @@ bool handleRegisterAsSeller(){
     if (Database::loggedBankCustomer == nullptr) {
         cout << "\nYou don't have a Bank Customer account.\n";
         cout << "   Please register as Bank Customer first.\n";
-        return false;
+        pressEnterToContinue();
+        return;
     }
 
     cout << "Input Your Name           : ";
@@ -191,7 +170,6 @@ bool handleRegisterAsSeller(){
     Database::addSeller(Database::loggedSeller);
     Database::isSeller = true;
     cout << "\nSeller Registered Successfully!\n";
-    return true;
 }
 
 /// =============================================================
@@ -199,6 +177,7 @@ bool handleRegisterAsSeller(){
 /// =============================================================
 
 void handleBuyerLoginMenu(){
+    clearScreen();
     bool inBuyerLoginMenu = true;
 
     while (inBuyerLoginMenu) {
@@ -231,35 +210,51 @@ void handleBuyerLoginMenu(){
         switch (buyerLoginMenuPrompt)
         {
         case CHECK_STATUS_ACCOUNT:
+            clearScreen();
             checkAccountStatus();
+            pressEnterToContinue();
             break;
         
         case UPGRADE_TO_SELLER:
+            clearScreen();
             upgradeToSeller();
+            pressEnterToContinue();
             break;
         
         case SHOW_BUYER_INFO:
+            clearScreen();
             showBuyerInfo();
+            pressEnterToContinue();
             break;
         
         case SHOW_LIST_STORES:
+            clearScreen();
             showListStores();
+            pressEnterToContinue();
             break;
 
         case SHOW_INVENTORY_FOR_BUYER:
+            clearScreen();
             showInventory();
+            pressEnterToContinue();
             break;
         
         case PURCHASE_ITEM:
+            clearScreen();
             purchaseItem();
+            pressEnterToContinue();
             break;
         
         case SHOW_ALL_ORDERS:
+            clearScreen();
             showAllOrders();
+            pressEnterToContinue();
             break;
         
         case SHOW_LATEST_SPENDING:
+            clearScreen();
             showLatestSpending();
+            pressEnterToContinue();
             break;
         
         case LOGOUT_BUYER:
@@ -274,6 +269,7 @@ void handleBuyerLoginMenu(){
 };
 
 void handleSellerLoginMenu(){
+    clearScreen();
     bool inSellerLoginMenu = true;
 
     while (inSellerLoginMenu) {
@@ -307,39 +303,57 @@ void handleSellerLoginMenu(){
         switch (sellerLoginMenuPrompt)
         {
         case SHOW_SELLER_INFO:
+            clearScreen();
             showSellerInfo();
+            pressEnterToContinue();
             break;
         
         case ADD_ITEM:
+            clearScreen();
             addItem();
+            pressEnterToContinue();
             break;
         
         case UPDATE_ITEM:
+            clearScreen();
             updateItem();
+            pressEnterToContinue();
             break;
         
         case SHOW_INVENTORY_FOR_SELLER:
+            clearScreen();
             showMyInventory();
+            pressEnterToContinue();
             break;
 
         case SHOW_ORDERS:
+            clearScreen();
             showAllOrders();
+            pressEnterToContinue();
             break;
         
         case UPDATE_ORDER_STATUS:
+            clearScreen();
             updateOrderStatus();
+            pressEnterToContinue();
             break;
         
         case SHOW_TOP_ITEMS:
+            clearScreen();
             mostFrequentMItems();
+            pressEnterToContinue();
             break;
         
         case SHOW_LOYAL_CUSTOMERS:
+            clearScreen();
             listMostActiveBuyerPerDay();
+            pressEnterToContinue();
             break;
         
         case CHECK_BALANCE:
+            clearScreen();
             checkSellerBalance();
+            pressEnterToContinue();
             break;
         
         case LOGOUT_SELLER:
@@ -354,6 +368,7 @@ void handleSellerLoginMenu(){
 };
 
 void handleBankCapabilitiesMenu(){
+    clearScreen();
     bool inBankCapabilities = true;
     while (inBankCapabilities) {
         cout << "\n=========================================================\n";
@@ -383,22 +398,34 @@ void handleBankCapabilitiesMenu(){
         switch (bankCapabilitiesPrompt)
         {
         case LIST_ALL_BANK_CUSTOMERS:
+            clearScreen();
             listAllBankCustommers();
+            pressEnterToContinue();
             break;
         case SEARCH_CUSTOMERS_BY_ID:
+            clearScreen();
             searchCustomersById();
+            pressEnterToContinue();
             break;
         case SHOW_LATEST_WEEK_TRANSACTION:
+            clearScreen();
             listAllTransactionLastWeek();
+            pressEnterToContinue();
             break;
         case FILTER_TRANSACTION_BY_TYPE:
+            clearScreen();
             filterTransactionByType();
+            pressEnterToContinue();
             break;
         case SHOW_DORMANT_CUSTOMERS:
+            clearScreen();
             listDormantAccounts();
+            pressEnterToContinue();
             break;
         case SHOW_TOP_ACTIVE_USERS:
+            clearScreen();
             listTopActiveUsersToday();
+            pressEnterToContinue();
             break;
         case LOGOUT_BANK:
             inBankCapabilities = false;
@@ -413,6 +440,7 @@ void handleBankCapabilitiesMenu(){
 }
 
 void handleStoreCapabilitiesMenu(){
+    clearScreen();
     bool inStoreCapabilities = true;
     while (inStoreCapabilities) {
         cout << "\n=========================================================\n";
@@ -441,19 +469,29 @@ void handleStoreCapabilitiesMenu(){
         switch (storeCapabilitiesPrompt)
         {
         case LIST_ALL_TRANSACTION_OF_THE_LATEST_K_DAYS:
+            clearScreen();
             listTransactionLatestKDays();
+            pressEnterToContinue();
             break;
         case LIST_ALL_PENDING_TRANSACTIONS:
+            clearScreen();
             listPendingTransactions();
+            pressEnterToContinue();
             break;
         case LIST_MOST_FREQUENT_M_ITEMS:
+            clearScreen();
             mostFrequentMItems();
+            pressEnterToContinue();
             break;
         case LIST_MOST_ACTIVE_BUYERS_PER_DAY:
+            clearScreen();
             listMostActiveBuyerPerDay();
+            pressEnterToContinue();
             break;
         case LIST_MOST_ACTIVE_SELLERS_PER_DAY:
+            clearScreen();
             listMostActiveSellerPerDay();
+            pressEnterToContinue();
             break;
         case LOGOUT_STORE:
             inStoreCapabilities = false;
@@ -564,16 +602,22 @@ void handleRegisterMenu() {
 
         switch (registerPrompt) {
             case REGISTER_AS_BUYER:
+                clearScreen();
                 handleRegisterAsBuyer();
+                pressEnterToContinue();
                 break;
             
 
             case REGISTER_AS_SELLER:
+                clearScreen();
                 handleRegisterAsSeller();
+                pressEnterToContinue();
                 break;
 
             case REGISTER_AS_BANK_CUSTOMER:
+                clearScreen();
                 handleRegisterBankCustomer();
+                pressEnterToContinue();
                 break;
 
             case BACK:
@@ -617,19 +661,27 @@ void handleLoginMenu(){
         switch (loginPrompt)
         {
         case LOGIN_AS_BUYER:
+            clearScreen();
             handleBuyerLogin();
+            pressEnterToContinue();
             break;
         
         case LOGIN_AS_SELLER:
+            clearScreen();
             handleSellerLogin();
+            pressEnterToContinue();
             break;
         
         case STORE_CAPABILITIES:
+            clearScreen();
             handleSellerLogin();
+            pressEnterToContinue();
             break;
         
         case BANK_CAPABILITIES:
+            clearScreen();
             handleBankCapabilities();
+            pressEnterToContinue();
             break;
         
         case LOGIN_BACK:
@@ -672,11 +724,13 @@ int main() {
         primaryPrompt = static_cast<PrimaryPrompt>(choice - 1);
         switch (primaryPrompt) {
             case LOGIN:
+                clearScreen();
                 handleLoginMenu();
                 primaryPrompt = MAIN_PROMPT;
                 break;
 
             case REGISTER:
+                clearScreen();
                 handleRegisterMenu();
                 primaryPrompt = MAIN_PROMPT; 
                 break;
